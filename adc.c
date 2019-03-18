@@ -71,13 +71,15 @@ int main (void)
 {
     wiringPiSetup();
     spiSetup(0);
-    float digital_value = 0;
-    int raw_value_adc = 0;
-//    for(int i = 0; i < 10000; i++){
-        printf("voltage = %f\n", compensate_value());
-	
-//	delayy(1);   
-// }
+//    scanf("Enter the sampling rate:%f", sampling_rate);
+    int seconds = 5000000;
+    clock_t start_time = clock();
+    while(clock() < start_time + seconds){
+        printf("%f\n", compensate_value());	
+	delayy(15);   
+    }
+
     close(myFd);
     return 0;
 }
+

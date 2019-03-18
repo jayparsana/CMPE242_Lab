@@ -67,8 +67,10 @@ float compensate_value(void){
     return compensated_digital_value;
 }
 
-int main (void)
+int main (int agrc, char *argv[])
 {
+    char char_sampling_rate = argv[1];
+    int int_sampling_rate = char_sampling_rate - '0'; 
     wiringPiSetup();
     spiSetup(0);
     float digital_value = 0;

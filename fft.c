@@ -94,18 +94,22 @@ int main(void)
 		X[i].b = 0.0;
 	}
 
-	printf ("*********Before*********\n");
-	for (i = 1; i <= 255; i++)
-		printf ("X[%d]:real == %f  imaginary == %f\n", i, X[i].a, X[i].b);
+//	printf ("*********Before*********\n");
+//	for (i = 1; i <= 255; i++)
+//		printf ("X[%d]:real == %f  imaginary == %f\n", i, X[i].a, X[i].b);
 	FFT();
 
-	printf ("\n\n**********After*********\n");
-	for (i = 1; i <= 255; i++)
-		printf ("X[%d]:real == %f  imaginary == %f\n", i, X[i].a, X[i].b);
-
+//	printf ("\n\n**********After*********\n");
+//	for (i = 1; i <= 255; i++)
+//		printf ("X[%d]:real == %f  imaginary == %f\n", i, X[i].a, X[i].b);
 
 	for(i = 1; i<=255; i++){
-		
+		X[i].a = pow(X[i].a, 2);
+		X[i].b = pow(X[i].b, 2);
+		ab[i] = X[i].a + X[i].b;
+		ab[i] = sqrt(ab[i]);
+//		printf("Squared value [%d] = %f\n", i, ab[i]);
+		printf("%f\n", ab[i]); 
 	}
 	return 0;
 }

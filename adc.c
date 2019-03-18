@@ -69,6 +69,7 @@ float compensate_value(void){
 
 int main (int agrc, char *argv[])
 {
+    // command line argument will accept sampling rate
     char char_sampling_rate = argv[1];
     int int_sampling_rate = char_sampling_rate - '0'; 
     wiringPiSetup();

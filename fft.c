@@ -1,14 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+#define SIZE_OF_INPUT 256
+#define TWO_TO_THE_POWER 8
+
 struct Complex
 {	double a;        //Real Part
 	double b;        //Imaginary Part
-}          X[256], U, W, T, Tmp;
+}          X[SIZE_OF_INPUT], U, W, T, Tmp;
 
 void FFT(void)
 {
-	int M = 8;
+	int M = TWO_TO_THE_POWER;
 	int N = pow(2, M);
 
 	int i = 1, j = 1, k = 1;
@@ -83,33 +87,33 @@ int main(void)
             } 
            float ab[256];
           // write to file vs write to screen
-	for(int j = 0; j <256; j++){ 
+	for(int j = 0; j < SIZE_OF_INPUT; j++){ 
         	fscanf(in_file, "%f", &ab[j]); // write to file  
 	}
 
 	int i;
-	for (i = 0; i < 256; i++)
+	for (i = 0; i < SIZE_OF_INPUT; i++)
 	{
 		X[i].a = ab[i];
 		X[i].b = 0.0;
 	}
 
-//	printf ("*********Before*********\n");
-//	for (i = 1; i <= 255; i++)
-//		printf ("X[%d]:real == %f  imaginary == %f\n", i, X[i].a, X[i].b);
+	printf ("*********Before*********\n");
+	for (i = 1; i <= SIZE_OF_INPUT - 1; i++)
+		printf ("X[%d]:real == %f  imaginary == %f\n", i, X[i].a, X[i].b);
 	FFT();
 
-//	printf ("\n\n**********After*********\n");
-//	for (i = 1; i <= 255; i++)
-//		printf ("X[%d]:real == %f  imaginary == %f\n", i, X[i].a, X[i].b);
+	printf ("\n\n**********After*********\n");
+	for (i = 1; i <= SIZE_OF_INPUT - 1; i++)
+		printf ("X[%d]:real == %f  imaginary == %f\n", i, X[i].a, X[i].b);
 
-	for(i = 1; i<=255; i++){
+	for(i = 1; i <= SIZE_OF_INPUT - 1; i++){
 		X[i].a = pow(X[i].a, 2);
 		X[i].b = pow(X[i].b, 2);
 		ab[i] = X[i].a + X[i].b;
 		ab[i] = sqrt(ab[i]);
-//		printf("Squared value [%d] = %f\n", i, ab[i]);
-		printf("%f\n", ab[i]); 
+		printf("Squared value [%d] = %f\n", i, ab[i]);
+//		printf("%f\n", ab[i]); 
 	}
 	return 0;
 }

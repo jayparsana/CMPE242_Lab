@@ -7,20 +7,17 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
- 
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
  
-#define	TRUE	            (1==1)
-#define	FALSE	            (!TRUE)
-#define CHAN_CONFIG_SINGLE  8
-#define CHAN_CONFIG_DIFF    0
+#define INPUT_ACQ_TIME      5000000
+#define SPI_FREQ			1000000
  
 static int myFd ;
  
 void spiSetup (int spiChannel)
 {
-    if ((myFd = wiringPiSPISetup (spiChannel, 1000000)) < 0)
+    if ((myFd = wiringPiSPISetup (spiChannel, SPI_FREQ)) < 0)
     {
         fprintf (stderr, "Can't open the SPI bus: %s\n", strerror (errno)) ;
         exit (EXIT_FAILURE) ;
@@ -29,34 +26,28 @@ void spiSetup (int spiChannel)
  
 int myAnalogRead(int spiChannel,int channelConfig,int analogChannel)
 {
-    if(analogChannel<0 || analogChannel>7)
+    if(analogChannel<0 || analogChannel>7){
         return -1;
-    unsigned char buffer[3] = {1}; // start bit
+	}
+    unsigned char buffer[3] = {1};
     buffer[1] = (channelConfig+analogChannel) << 4;
     wiringPiSPIDataRW(spiChannel, buffer, 3);
     return ( (buffer[1] & 3 ) << 8 ) + buffer[2]; // get last 10 bits
 }
 
-
-
-void delayy(int number_of_seconds) 
+void _delay(int number_of_seconds) 
 { 
-    // Converting time into milli_seconds 
     int milli_seconds = 1000 * number_of_seconds; 
-  
-    // Stroing start time 
-    clock_t start_time = clock(); 
-  
-    // looping till required time is not acheived 
+    clock_t start_time = clock();
     while (clock() < start_time + milli_seconds) 
         ; 
 } 
 
 float compensate_value(void){
     float uncompensated_digital_value = 0, 
- 	  compensated_digital_value = 0,
-	  g_x = 0,
-	  new_raw_value = 0;
+		  compensated_digital_value = 0,
+		  g_x = 0,
+		  new_raw_value = 0;
 
     int raw_value = 0;
     raw_value = myAnalogRead(0,8,0);
@@ -70,16 +61,19 @@ float compensate_value(void){
 int main (int agrc, char *argv[])
 {
     // command line argument will accept sampling rate
-    char char_sampling_rate = argv[1];
-    int int_sampling_rate = char_sampling_rate - '0'; 
+    char *char_sampling_rate = argv[1];
+    int int_sampling_rate = atoi(char_sampling_rate); 
+    printf("Sampling Rate given: %dHz\n", int_sampling_rate);
+    printf("Input acquisition time is %d seconds\n", (INPUT_ACQ_TIME/1000000));
+    //Initialization of SPI 
     wiringPiSetup();
     spiSetup(0);
-//    scanf("Enter the sampling rate:%f", sampling_rate);
-    int seconds = 5000000;
+    
+    int seconds = INPUT_ACQ_TIME;			//Take input for 5 seconds
     clock_t start_time = clock();
     while(clock() < start_time + seconds){
         printf("%f\n", compensate_value());	
-	delayy(15);   
+		_delay(1000 / int_sampling_rate);   
     }
 
     close(myFd);
